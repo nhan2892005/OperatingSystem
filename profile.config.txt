@@ -1,0 +1,8 @@
+Username: nhan
+Password: PhucNhan289@
+System: Linux
+Node Name: PhucNhan-PC
+Release: 5.15.153.1-microsoft-standard-WSL2
+Version: #1 SMP Fri Mar 29 23:14:13 UTC 2024
+Machine: x86_64
+Timestamp: 2025-01-20 16:42:22
