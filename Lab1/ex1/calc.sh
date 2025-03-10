@@ -1,16 +1,17 @@
 #!/bin/bash
-
 declare -a HISTORY
-LAST_ANS=""
+LAST_ANS_FILE="cache.out"
+LAST_ANS="0"
+
+if [ -f "$LAST_ANS_FILE" ]; then
+    LAST_ANS=$(cat "$LAST_ANS_FILE")
+else
+    LAST_ANS="0"
+fi
 
 while true; do
     # * USER INPUT
     read -p ">> " exp_str
-
-    # * Normalize the expression
-    exp_str=$(echo "$exp_str" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-    exp_str=$(echo "$exp_str" | sed -E 's/ +/ /g; s/\( +/(/g; s/ +\)/)/g')
-    # echo "$exp_str" >> history.txt
 
     # * Process special commands
     case "$exp_str" in
@@ -18,47 +19,36 @@ while true; do
             exit 0
             ;;
         HIST)
-            if [ ${#HISTORY[@]} -eq 0 ]; then
-                echo "No history yet."
+            if [ ${#HISTORY[@]} -gt 5 ]; then
+                for ((i=${#HISTORY[@]}-5; i<${#HISTORY[@]}; i++)); do
+                    echo "${HISTORY[$i]}"
+                done
             else
                 for line in "${HISTORY[@]}"; do
                     echo "$line"
                 done
             fi
-            continue
-            ;;
-        CLEAR)
-            HISTORY=()
-            LAST_ANS=""
-            read -n 1 -s -r -p "MEMORY WAS CLEARED. Press any key to continue..."
+            read -s
             clear
             continue
             ;;
     esac
 
-    # * Use ANS but memory is empty
-    if [[ "$exp_str" == *"ANS"* ]] && [ -z "$LAST_ANS" ]; then
-        echo "DO NOT HAVE EXPRESSION BEFORE"
-        continue
-    fi
-
-    # * Replace ANS with the last answer
+    # Store input
     expr=$(echo "$exp_str" | sed "s/ANS/$LAST_ANS/g")
 
-    # * Validate the substituted expression
-    # Allow only digits, whitespace, parentheses, and the operators: +, -, *, /, %, and dot.
-    if echo "$expr" | grep -q "[^0-9+*/%. ()-]"; then
+    # Validate equation
+    if echo "$expr" | grep -q "[^0-9+*/%() -]"; then
         echo "SYNTAX ERROR"
-        continue
+        exit 1
     fi
 
-    # Evaluate the expression
-    if echo "$expr" | grep -q "//"; then
-        eval_expr=$(echo "$expr" | sed 's|//|/|g')
-        result=$(echo "scale=0; $eval_expr" | bc 2>err.tmp)
+    # Check if the operation contains '%'
+    if echo "$expr" | grep -q "%"; then
+        result=$(awk "BEGIN { print $expr }")
+        echo "" > err.tmp
     else
-        eval_expr="$expr"
-        result=$(echo "scale=2; $eval_expr" | bc 2>err.tmp | sed 's/\.00$//')
+        result=$(echo "scale=2; $expr" | bc 2>err.tmp | sed 's/\.00$//' | sed 's/^\.0*/0./')
     fi
 
     err=$(cat err.tmp)
@@ -71,11 +61,21 @@ while true; do
         else
             echo "SYNTAX ERROR"
         fi
+        read -s
+
+        clear
         continue
     fi
 
     # Print the result
     echo "$result"
-    LAST_ANS="$result"                  # Save the result to the memory
-    HISTORY+=("$exp_str = $result")     # Save the expression and the result to the history  
+
+    # Save the last answer
+    LAST_ANS="$result"
+    echo "$LAST_ANS" > "$LAST_ANS_FILE"
+    HISTORY+=("$exp_str = $result")
+
+    read -s
+
+    clear
 done

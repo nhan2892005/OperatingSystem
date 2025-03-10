@@ -23,8 +23,6 @@ void trim(char *s) {
 // Replace every occurrence of "ANS" in input with the string last_ans_str.
 // Returns a newly allocated string (caller must free it).
 char *replace_ans(const char *input, const char *last_ans_str) {
-    size_t token_len = 3; // length of "ANS"
-    size_t rep_len = strlen(last_ans_str);
     size_t bufsize = strlen(input) + 1;
     // A rough overestimate: if many occurrences occur, we might need extra space.
     bufsize += 100;
@@ -55,7 +53,14 @@ int equals(const char *a, const char *b) {
 int main(void) {
     char line[MAX_LINE];
     double last_ans = 0.0;
-    int has_last_ans = 0; // flag: if a previous answer exists
+    
+    FILE *fp = fopen("cache.out", "r");
+    if (fp) {
+        if (fscanf(fp, "%lf", &last_ans) != 1) {
+            last_ans = 0.0;
+        }
+        fclose(fp);
+    }
 
     while (1) {
         printf(">> ");
@@ -72,20 +77,11 @@ int main(void) {
         // Process special commands.
         if (equals(line, "EXIT")) {
             break;
-        } else if (equals(line, "CLEAR")) {
-            last_ans = 0.0;
-            has_last_ans = 0;
-            printf("MEMORY WAS CLEARED.\n");
-            continue;
         }
 
         // If the input contains "ANS" but no previous answer exists.
         char *processed = NULL;
         if (strstr(line, "ANS") != NULL) {
-            if (!has_last_ans) {
-                printf("DO NOT HAVE EXPRESSION BEFORE\n");
-                continue;
-            }
             char last_ans_str[64];
             if (last_ans == (int)last_ans)
                 sprintf(last_ans_str, "%d", (int)last_ans);
@@ -110,6 +106,9 @@ int main(void) {
         if (!valid) {
             printf("SYNTAX ERROR\n");
             free(processed);
+            printf("\r");
+            int f = fscanf(stdin, "%*c");
+            f = system("clear");
             continue;
         }
 
@@ -141,9 +140,15 @@ int main(void) {
 
         if (status == 1) {
             printf("SYNTAX ERROR\n");
+            printf("\r");
+            int f = fscanf(stdin, "%*c");
+            f = system("clear");
             continue;
         } else if (status == 2) {
             printf("MATH ERROR\n");
+            printf("\r");
+            int f = fscanf(stdin, "%*c");
+            f = system("clear");
             continue;
         }
 
@@ -153,7 +158,17 @@ int main(void) {
         else
             printf("%.2f\n", result);
         last_ans = result;
-        has_last_ans = 1;
+
+        // Save last answer to cache file.
+        fp = fopen("cache.out", "w");
+        if (fp) {
+            fprintf(fp, "%.10f\n", last_ans);
+            fclose(fp);
+        }
+
+        printf("\r");
+        int f = fscanf(stdin, "%*c");
+        f = system("clear");
     }
     return 0;
 }

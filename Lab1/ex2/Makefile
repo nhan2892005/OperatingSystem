@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -O2 -g
+CFLAGS = -O2 -g
 
 OBJS = calc.o calc_logic.o
 

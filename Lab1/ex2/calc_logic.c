@@ -35,7 +35,7 @@ static double parse_expr(int use_int_div) {
 static double parse_term(int use_int_div) {
     double left = parse_factor(use_int_div);
     skip_whitespace();
-    while (*p == '*' || *p == '/') {
+    while (*p == '*' || *p == '/' || *p == '%') {
         char op = *p;
         p++;
         double right = parse_factor(use_int_div);
@@ -52,6 +52,12 @@ static double parse_term(int use_int_div) {
             }
         } else if (op == '*') {
             left *= right;
+        } else if (op == '%') {
+            if (right == 0) {
+                math_error = 1;
+                return 0;
+            }
+            left = (int)left % (int)right;
         }
     }
     return left;
