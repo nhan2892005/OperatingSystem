@@ -7,8 +7,10 @@
             "request": "launch",
             "program": "${fileDirname}/exe_files/${fileBasenameNoExtension}",
             "args": [
-                "/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_1.txt",
-                "/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_2.txt"
+                //"/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_1.txt",
+                //"/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_2.txt",
+                //"10",
+                "15",
             ],
             "cwd": "${fileDirname}",
             "stopAtEntry": false,
