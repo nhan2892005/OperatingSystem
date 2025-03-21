@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build C/C++ File",
+            "type": "shell",
+            "command": "gcc",
+            "args": [
+                "-o",
+                "${fileDirname}/exe_files/${fileBasenameNoExtension}",
+                "${file}",
+                //"-lzmq"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Compiles the current C/C++ file and outputs an .exe in the same directory."
+        }
+    ]
+}

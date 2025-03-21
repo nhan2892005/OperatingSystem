@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Current C/C++ File",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/exe_files/${fileBasenameNoExtension}",
+            "args": [
+                "/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_1.txt",
+                "/mnt/n/Code_space/OperatingSystem/Lab2/movie-100k_2.txt"
+            ],
+            "cwd": "${fileDirname}",
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "preLaunchTask": "Build C/C++ File",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
