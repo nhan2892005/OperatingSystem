@@ -3,17 +3,17 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#define MAXCOUNT 1000000000
+#define MAXCOUNT 1e9
 
 int count = 0;
 pthread_mutex_t lock;
 
 void* f_count(void* sid) {
+    pthread_mutex_lock(&lock);
     for (int i = 0; i < MAXCOUNT; i++) {
-        pthread_mutex_lock(&lock);
         count = count + 1;
-        pthread_mutex_unlock(&lock);
     }
+    pthread_mutex_unlock(&lock);
     printf("Thread %s : holding %d\n", (char*) sid, count);
     return NULL;
 }
