@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run Current C/C++ File",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/mnt/n/Code_space/OperatingSystem/Lab4/lab4-student/p1threadpool/mypool",
+            "args": [],
+            "cwd": "${fileDirname}",
+            "stopAtEntry": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
